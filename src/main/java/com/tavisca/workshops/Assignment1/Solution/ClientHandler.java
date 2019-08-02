@@ -30,13 +30,6 @@ public class ClientHandler extends Thread {
     public void run() {
 
         try {
-            String protocolWithVersion = "HTTP/1.1";
-            String responseStatusCode;
-            String serverDescription = "My Java HTTP Server : 1.0";
-            String responseDateAndTime = (new Date()).toString();
-            String contentType = "text/html";
-            String contentLength = "256";
-            String fileContents;
             String requestHeaderData = (new StreamReader(inStream).readDataFromStream());
             this.logsWriter.writeLog("Header Information : " + requestHeaderData);
             if (requestHeaderData.startsWith("GET")) {
@@ -45,6 +38,7 @@ public class ClientHandler extends Thread {
                 resourceExtractor.extractResourceFromHeader(requestHeaderData);
                 String nameOfResourceRequestByClient = resourceExtractor.getResourceName();
                 this.logsWriter.writeLog("Resource Request by Client : " + nameOfResourceRequestByClient);
+                String responseStatusCode;
                 if (resourceExtractor.isResourceAvailable()) {
                     responseStatusCode = "200 OK";
                     this.logsWriter.writeLog("Requested Resource Exist in the Server");
@@ -53,11 +47,9 @@ public class ClientHandler extends Thread {
                     nameOfResourceRequestByClient = "error.html";
                     this.logsWriter.writeLog("Requested Resource DOES NOT Exist in the Server : 404 Not Found ");
                 }
-                fileContents = (new ContentReader()).readContentsOfFile(nameOfResourceRequestByClient);
-                Response response = new Response(protocolWithVersion, responseStatusCode,
-                        serverDescription, responseDateAndTime, contentType, contentLength,
-                        fileContents);
-                response.sendResponse(outStream);
+                Response response = new Response("HTTP/1.1",responseStatusCode,
+                        "My Java HTTP Server : 1.0", nameOfResourceRequestByClient, outStream );
+                response.sendResponse();
                 this.logsWriter.writeLog("Response Sent to the Client");
             } else {
                 this.logsWriter.writeLog("<NOT GET> Request Found");
