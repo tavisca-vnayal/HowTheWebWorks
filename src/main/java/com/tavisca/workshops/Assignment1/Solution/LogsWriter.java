@@ -10,7 +10,7 @@ public class LogsWriter {
 
     LogsWriter(String className) throws IOException {
         this.logger = Logger.getLogger(className);
-        FileHandler fileHandler = new FileHandler("MyLogFile.log");
+        FileHandler fileHandler = new FileHandler(className + ".log");
         this.logger.addHandler(fileHandler);
         SimpleFormatter formatter = new SimpleFormatter();
         fileHandler.setFormatter(formatter);
